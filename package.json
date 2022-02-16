@@ -42,6 +42,11 @@
     "last 2 versions",
     "not dead"
   ],
+  "bin": {
+    "create": "bin/create",
+    "delete": "bin/delete",
+    "list": "bin/list"
+  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
