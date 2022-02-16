@@ -40,5 +40,17 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e && ./sh/commit-msg.sh",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*{.ts,.tsx,.vue}": [
+      "./sh/precommit.sh",
+      "npm run eslint"
+    ]
+  }
 }
