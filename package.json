@@ -43,14 +43,7 @@
   ],
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -e && ./sh/commit-msg.sh",
-      "pre-commit": "lint-staged"
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
     }
-  },
-  "lint-staged": {
-    "*{.ts,.tsx,.vue}": [
-      "./sh/precommit.sh",
-      "npm run eslint"
-    ]
   }
 }
