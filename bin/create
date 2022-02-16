@@ -1,0 +1,113 @@
+#!/usr/bin/env node
+const shell = require('shelljs');
+// 交互式命令行
+const inquirer = require('inquirer');
+// 修改控制台字符串的样式
+const chalk = require('chalk');
+// node 内置文件模块
+const fs = require('fs');
+// 读取根目录下的 template.json
+const tplObj = require(`${__dirname}/../template`);
+
+// 自定义交互式命令行的问题及简单的校验
+let question = [
+  {
+    name: 'name',
+    type: 'input',
+    message: '请输入项目名称',
+    validate(val) {
+      if (val === '') {
+        return 'Name is required!';
+      } else if (tplObj[val]) {
+        return 'Template has already existed!';
+      } else {
+        return true;
+      }
+    },
+  },
+];
+inquirer.prompt(question).then((answers) => {
+  const typeTool = {
+    name: 'typetool',
+    type: 'list',
+    message: 'choose the development tool to create',
+    choices: ['H5', 'webcell'],
+    default: 'H5',
+  };
+  inquirer.prompt(typeTool).then((typeanswers) => {
+    let { name } = answers;
+    tplObj[name] = {
+      entry: `src/pages/${name}/main.ts`,
+      template: `src/pages/${name}/${name}.html`,
+      filename: `${name}.html`,
+      chunks: ['chunk-vendors', 'chunk-common', `${name}`],
+    };
+    fs.writeFile(`${__dirname}/../template.json`, JSON.stringify(tplObj, '', '\t'), 'utf-8', (err) => {
+      if (err) console.log(err);
+      shell.cp('-r', 'bin/index', `src/pages/${name}`);
+      fs.rename(`src/pages/${name}/index.html`, `src/pages/${name}/${name}.html`, (err) => {
+        if (err) throw err;
+      });
+      // 修改index.html的007配置，默认项目名为输入的项目名
+      const indexHtml = `src/pages/${name}/${name}.html`;
+      fs.readFile(indexHtml, 'utf8', (err, file) => {
+        if (err) throw err;
+        // console.log(file)
+        // 替换api地址
+        let result = file.replace('newsinner_name', name);
+        fs.writeFile(indexHtml, result, 'utf8', function(err) {
+          if (err) return console.log(err);
+        });
+      });
+      // 拷贝基础的vue和store单测文件
+      shell.cp('-r', 'bin/tests', `tests/unit/pages/${name}`);
+      // 修改拷贝后的index单测文件
+      const testIndex = `tests/unit/pages/${name}/index.spec.ts`;
+      fs.readFile(testIndex, 'utf8', (err, file) => {
+        if (err) throw err;
+        const result = file.replace('newsinner_name', name);
+        fs.writeFile(testIndex, result, 'utf8', (err) => {
+          if (err) return console.log(err);
+        });
+      });
+      // 修改拷贝后的store单测文件引用地址
+      const testStoreIndex = `tests/unit/pages/${name}/store/index.spec.ts`;
+      fs.readFile(testStoreIndex, 'utf8', (err, file) => {
+        if (err) throw err;
+        const result = file.replace('index', name);
+        fs.writeFile(testStoreIndex, result, 'utf8', (err) => {
+          if (err) return console.log(err);
+        });
+      });
+      // 修改拷贝后的router单测文件引用地址
+      const testRouterIndex = `tests/unit/pages/${name}/router/index.spec.ts`;
+      fs.readFile(testRouterIndex, 'utf8', (err, file) => {
+        if (err) throw err;
+        const result = file.replace('index', name);
+        fs.writeFile(testRouterIndex, result, 'utf8', (err) => {
+          if (err) return console.log(err);
+        });
+      });
+      // 替换index.vue变为webcell版本
+      if ('webcell' === typeanswers.typetool) {
+        shell.cp('-r', 'bin/webcell/Webcell.vue', `src/pages/${name}/Index.vue`);
+        shell.cp('-r', 'bin/webcell/cellconfig.json', `src/pages/${name}/`);
+      }
+      // 修改默认上报活动参数
+      const indexVue = `src/pages/${name}/Index.vue`;
+      fs.readFile(indexVue, 'utf8', (err, file) => {
+        if (err) throw err;
+        // console.log(file)
+        // 替换api地址
+        let result = file.replace('newsinner_name', name);
+        fs.writeFile(indexVue, result, 'utf8', function(err) {
+          if (err) return console.log(err);
+        });
+      });
+      console.log('\n');
+      console.log(chalk.green('创建项目成功'));
+      console.log(tplObj);
+      console.log('\n');
+    });
+  });
+});

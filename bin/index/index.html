@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" class="borderbox">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="dns-prefetch" href="//mat1.gtimg.com" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="" />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="https://mat1.gtimg.com/news/images/inews/2020/feiyan/img/h5-04.jpg" />
+    <link rel="shortcut icon" href="https://mat1.gtimg.com/news/images/inews/2020/feiyan/img/h5-04.jpg" />
+    <meta property="og:url" content="" />
+    <title>腾讯新闻</title>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <script type="text/javascript" src="https://beaconcdn.qq.com/sdk/3.3.1/beacon_web.min.js" charset="utf-8"></script>
+    <script charset="utf-8" src="https://mat1.gtimg.com/www/js/emonitor/custom_ed041a23.js"></script>
+    <script charset="utf-8">
+      var emonitorIns = emonitor.create({
+        name: 'newsinner_name',//项目名称
+        atta: {
+            name: 'newsinner',//产品名称
+        },
+        mode: '007',
+        onBeforeSend: function(data) {
+          // 过滤特定地址，例如过滤掉灯塔上报
+          if (data.url.indexOf("oth.eve.mdt.qq.com") >= 0) {
+            return false;
+          }
+        }
+      });
+    </script>
+    <style>
+      .pageLoading {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background:url("https://mat1.gtimg.com/news/images/inews/2020/feiyan/img/logo.png") no-repeat center center;
+        background-size: 200px auto;
+        background-color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div class="pageLoading"></div>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+ 
+const inquirer = require('inquirer');
+const chalk = require('chalk');
+const fs = require('fs');
+const shell = require('shelljs');
+const tplObj = require(`${__dirname}/../template`);
+ 
+let question = [
+ {
+ name: "name",
+ message: "请输入要删除的项目名称",
+ validate (val) {
+  if (val === '') {
+  return 'Name is required!';
+  } else if (!tplObj[val]) {
+  return 'Product does not exist!';
+  } else {
+  return true;
+  }
+ }
+ }
+]
+ 
+inquirer
+ .prompt(question).then(answers => {
+ let { name } = answers;
+ delete tplObj[name]
+ // 更新 template.json 文件
+ fs.writeFile(`${__dirname}/../template.json`, JSON.stringify(tplObj, '', '\t'), 'utf-8', err => {
+  if (err) console.log(err);
+  shell.rm('-rf', `src/pages/${name}`);
+  shell.rm('-rf', `src/public/${name}.html`);
+  shell.rm('-rf', `tests/unit/pages/${name}`);
+  console.log('\n');
+  console.log(chalk.green('Deleted successfully!\n'));
+  console.log(chalk.green('The latest template list is: \n'));
+  console.log(tplObj);
+  console.log('\n');
+ })
+ })
